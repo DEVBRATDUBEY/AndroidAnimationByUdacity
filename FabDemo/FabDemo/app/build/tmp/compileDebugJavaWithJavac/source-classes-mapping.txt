@@ -1,0 +1,4 @@
+com/udacity/fabdemo/BuildConfig.java
+ com.udacity.fabdemo.BuildConfig
+com/udacity/fabdemo/MainActivity.java
+ com.udacity.fabdemo.MainActivity

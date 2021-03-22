@@ -1,0 +1,135 @@
+package com.devbrat.immersiveimages;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.res.Resources;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.RadioButton;
+
+import android.graphics.Matrix;
+import static android.widget.ImageView.*;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
+
+public class MainActivity extends AppCompatActivity {
+
+    @BindView(R.id.imageView) ImageView imageView;
+
+    // Radio Buttons
+    @BindView(R.id.noneBtn) RadioButton noneBtn;
+    @BindView(R.id.centerBtn) RadioButton centerBtn;
+    @BindView(R.id.centerCropBtn) RadioButton centerCropBtn;
+    @BindView(R.id.centerInsideBtn) RadioButton centerInsideBtn;
+    @BindView(R.id.fitCenterBtn) RadioButton fitCenterBtn;
+    @BindView(R.id.fitEndBtn) RadioButton fitEndBtn;
+    @BindView(R.id.fitStartBtn) RadioButton fitStartBtn;
+    @BindView(R.id.fitXYBtn) RadioButton fitXYBtn;
+    @BindView(R.id.matrixBtn) RadioButton matrixBtn;
+
+    Matrix matrix;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        ButterKnife.bind(this);
+
+        fitCenterBtn.setChecked(true);
+        matrix = new Matrix();
+        matrix.postScale(0.5f, 0.5f);
+        matrix.postTranslate(100,100);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    public RadioButton getSelectedRadio(View view) {
+        RadioButton [] btns = {centerBtn,centerCropBtn,centerInsideBtn,fitCenterBtn,
+                fitEndBtn,fitStartBtn,fitXYBtn,matrixBtn, noneBtn};
+        for (RadioButton radioButton : btns) {
+            if (radioButton.isChecked() && radioButton != view) {
+                return radioButton;
+            }
+        }
+        return null;
+    }
+
+    @OnClick({R.id.centerBtn, R.id.centerCropBtn, R.id.centerInsideBtn, R.id.fitCenterBtn,
+            R.id.fitEndBtn, R.id.fitStartBtn, R.id.fitXYBtn, R.id.matrixBtn, R.id.noneBtn})
+    public void clickRadioButton(RadioButton view) {
+        // Check to see what is clicked
+        RadioButton checkedRadio = getSelectedRadio(view);
+        if (checkedRadio != null && checkedRadio != view) {
+            checkedRadio.setChecked(false);
+        }
+        // If currently checked, do nothing.
+        imageView.setPadding(0,0,0,0);
+        switch((String)view.getText()) {
+
+            case "NO!!!!":
+                int px = dpToPx(32);
+                imageView.setPadding(px,px,px,px);
+                imageView.setScaleType(ScaleType.FIT_CENTER);
+                break;
+            case "CENTER":
+                imageView.setScaleType(ScaleType.CENTER);
+                break;
+            case "CENTER_CROP":
+                imageView.setScaleType(ScaleType.CENTER_CROP);
+                break;
+            case "CENTER_INSIDE":
+                imageView.setScaleType(ScaleType.CENTER_INSIDE);
+                break;
+            case "FIT_CENTER":
+                imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                break;
+            case "FIT_END":
+                imageView.setScaleType(ImageView.ScaleType.FIT_END);
+                break;
+            case "FIT_START":
+                imageView.setScaleType(ImageView.ScaleType.FIT_START);
+                break;
+            case "FIT_XY":
+                imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                break;
+            case "MATRIX":
+                imageView.setScaleType(ImageView.ScaleType.MATRIX);
+                imageView.setImageMatrix(matrix);
+                break;
+
+        }
+        // If different, alter view
+
+    }
+
+    public static int dpToPx(int dp) {
+        return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
+    }
+}
